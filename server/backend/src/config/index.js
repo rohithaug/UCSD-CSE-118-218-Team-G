@@ -11,5 +11,5 @@ exports.config = {
   hostname: process.env.NODEJS_IP || 'localhost',
   api: {
     basePath: "/api/1"
-  },
+  }
 };
