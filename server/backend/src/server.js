@@ -16,3 +16,31 @@ app.get("server").listen(config.port, config.hostname, () => {
     }:${config.port} in ${process.env.NODE_ENV} mode`
   );
 });
+
+// EXIT HANDLER
+const exitHandler = () => {
+    if (server) {
+        server.close(() => {
+            logger.info('Server closed');
+            process.exit(1);
+        });
+    } else {
+        process.exit(1);
+    }
+};
+  
+// UNEXPECTED ERROR HANDLER
+const unexpectedErrorHandler = (error) => {
+    logger.error(error);
+    exitHandler();
+};
+  
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', unexpectedErrorHandler);
+  
+process.on('SIGTERM', () => {
+    logger.info('SIGTERM received');
+    if (server) {
+        server.close();
+    }
+});
