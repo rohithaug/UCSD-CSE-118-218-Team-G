@@ -6,7 +6,6 @@ const { userModel } = require('../models');
 
 // REQUIRE UTILS
 const apiError = require('../utils/apiError');
-const ApiError = require('../utils/apiError');
 
 /**
  * Creates a new user.
@@ -91,7 +90,7 @@ const deleteUser = async (userId) => {
     const user = await getUser(userId);
 
     if (!user) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+        throw new apiError(httpStatus.NOT_FOUND, 'User not found');
     }
 
     await userModel.deleteOne({ _id: userId });
