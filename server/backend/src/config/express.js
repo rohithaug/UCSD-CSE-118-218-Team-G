@@ -6,6 +6,7 @@ const cors = require("cors");
 const methodOverride = require('method-override');
 const helmet = require('helmet');
 const http = require('http');
+const httpStatus = require('http-status');
 
 // CONFIG
 const { config } = require("./index");
@@ -56,7 +57,7 @@ module.exports = () => {
     });
 
     // REQUIRE ALL SERVER ROUTES
-    require("../app/routes")(app);
+    require("../app/routes/v1")(app);
 
     // REQUIRE APP CLIENT
     // TODO
@@ -66,6 +67,12 @@ module.exports = () => {
         if (err.name === "UnauthorizedError") {
             res.status(401).send("UnauthorizedError");
         }
+
+        if (err.statusCode) {
+            res.status(err.statusCode).send(err.message);
+        }
+
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
     });
 
     // INITIALIZE SERVER
