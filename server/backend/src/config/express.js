@@ -68,11 +68,13 @@ module.exports = () => {
             res.status(401).send("UnauthorizedError");
         }
 
+        console.log(err);
+
         if (err.statusCode) {
             res.status(err.statusCode).send(err.message);
+        } else {
+            res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
         }
-
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
     });
 
     // INITIALIZE SERVER
