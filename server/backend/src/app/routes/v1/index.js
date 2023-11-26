@@ -7,6 +7,7 @@ const { config } = require("../../../config");
 
 // REQUIRE ROUTES
 const userRoutes = require("./user.route");
+const messageRoutes = require("./messages.route");
 
 module.exports = (app) => {
     // BASE URI
@@ -16,6 +17,9 @@ module.exports = (app) => {
 
     // USER ROUTES
     router.use('/user', userRoutes);
+
+    // MESSAGES ROUTES
+    router.use('/message', messageRoutes);
 
     // REGISTER API ROUTES
     app.use(`${config.api.basePath}`, router);
