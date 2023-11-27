@@ -39,12 +39,34 @@ const getMessage = catchAsync(async (req, res) => {
     if (!user) {
         res.status(httpStatus.NOT_FOUND).send('User not found');
     } else {
-        const messages = await messageService.getMessage(req.query.userId);
+        const messages = await messageService.getMessage(req.query);
         res.status(httpStatus.OK).send(messages);
+    }
+});
+
+/**
+ * Get messages metrics for the given user ID.
+ *
+ * @function
+ * @async
+ * @name getMetrics
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} Promise that resolves with metrics for the user.
+ * @throws {Error} If there is an issue getting metrics for the user or sending the response.
+ */
+const getMetrics = catchAsync(async (req, res) => {
+    const user = await userService.getUser(req.query.userId);
+    if (!user) {
+        res.status(httpStatus.NOT_FOUND).send('User not found');
+    } else {
+        const metrics = await messageService.getMetrics(req.query.userId, req.query.responseType);
+        res.status(httpStatus.OK).send(metrics);
     }
 });
 
 module.exports = {
     createMessage,
-    getMessage
+    getMessage,
+    getMetrics
 };
