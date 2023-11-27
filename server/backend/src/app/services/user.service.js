@@ -98,10 +98,26 @@ const deleteUser = async (userId) => {
     return;
 };
 
+/**
+ * Get user ID for a given user name
+ * 
+ * @function
+ * @async
+ * @name getUserId
+ * @param {string} userName - The user's name
+ * @returns {Promise<userId>} - Promise that resolved to the retrieved user ID.
+ */
+const getUserId = async (userName) => {
+    const user = await userModel.findOne({ name: userName });
+
+    return user?.id;
+};
+
 module.exports = {
     getUsers,
     createUser,
     getUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserId
 };
