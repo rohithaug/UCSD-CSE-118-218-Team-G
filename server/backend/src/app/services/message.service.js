@@ -67,20 +67,41 @@ const createMessage = async (messageBody) => {
  * @returns {Promise<user>} - Promise that resolved to the retrieved messages.
  */
 const getMessage = async (userId) => {
-    const res = await messageModel.findOne({ userId });
+    const res = await messageModel.aggregate([
+            {
+                $match: { userId }
+            },
+            {
+                $project: {
+                    messages: {
+                    $filter: {
+                        input: '$messages',
+                        as: 'message',
+                        cond: { $eq: ['$$message.readStatus', false] }
+                    }
+                    }
+                }
+            }
+        ]);
 
-    if (!res) {
+    if (!res || res.length == 0 || !res[0].messages) {
         return []
     } else {
-        const filteredMessages = res.messages.filter(item => !item.readStatus);
-
-        const messages = filteredMessages.map(item => {
+        messages = res[0].messages.map(item => {
             return {
                 from: item.from,
                 to: item.to,
                 message: item.message
             }
         });
+
+        // Update the readStatus of these filtered messages to true
+        const messagesIdArray = res[0].messages.map(item => item._id);
+        await messageModel.updateMany(
+            { '_id': res[0]._id },
+            { $set: { 'messages.$[elem].readStatus': true } },
+            { arrayFilters: [{ 'elem._id': { $in: messagesIdArray } }] }
+        );
 
         return messages;
     }
