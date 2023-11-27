@@ -11,4 +11,7 @@ router.post("/", messageController.createMessage);
 // GET REQUEST FOR MESSAGE
 router.get("/", messageController.getMessage);
 
+// GET REQUEST FOR MESSAGE METRICS
+router.get("/metrics", messageController.getMetrics);
+
 module.exports = router;

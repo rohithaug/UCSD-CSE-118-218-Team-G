@@ -107,7 +107,96 @@ const getMessage = async (userId) => {
     }
 };
 
+/**
+ * Get metrics of messages for an user ID
+ * 
+ * @function
+ * @async
+ * @name getMetrics
+ * @param {string} userId - The user's ID
+ * @param {'object'|'text'} responseType - Response Type
+ * @returns {Promise<user>} - Promise that resolved to the retrieved messages.
+ */
+const getMetrics = async (userId, responseType) => {
+    const res = await messageModel.aggregate([
+            {
+                $match: { userId }
+            },
+            {
+                $project: {
+                    messages: {
+                    $filter: {
+                        input: '$messages',
+                        as: 'message',
+                        cond: { $eq: ['$$message.readStatus', false] }
+                    }
+                    }
+                }
+            }
+        ]);
+
+    if (!res || res.length == 0 || !res[0].messages) {
+        if (responseType == 'text') {
+            return "There are no messages."
+        } else {
+            return {
+                total: 0,
+                messages: []
+            }
+        }
+    } else {
+        const result = {};
+        res[0].messages.forEach(item => {
+            if (item.from in result) {
+                result[item.from] += 1;
+            } else {
+                result[item.from] = 0;
+            }
+        });
+
+        // Get user names of all IDs
+        const userIdArray = Object.keys(result);
+        const userDetails = await userModel.find({ '_id': { $in: userIdArray } });
+        const userNames = {}
+        userDetails.forEach((item) => {
+            userNames[item._id] = item.name
+        });
+
+        const totalMessages =  Object.values(result).reduce((a, b) => a + b, 0);
+        const resultEntries = Object.entries(result);
+        if (responseType == 'text') {
+            let responseText = `There are in total ${totalMessages} messages`;
+
+            resultEntries.forEach(([key, value], idx) => {
+                if (idx == resultEntries.length - 1) {
+                    responseText = responseText.concat(` and ${value} messages from ${userNames[key]}.`);
+                } else {
+                    responseText = responseText.concat(`, ${value} messages from ${userNames[key]}`);
+                }
+            });
+
+            return responseText;
+        } else {
+            const metrics = {
+                total: totalMessages,
+                messages: []
+            };
+
+            resultEntries.forEach(([key, value]) => {
+                metrics.messages.push({
+                    userId: key,
+                    userName: userNames[key],
+                    count: value
+                })
+            });
+
+            return metrics;
+        }
+    }
+};
+
 module.exports = {
     createMessage,
-    getMessage
+    getMessage,
+    getMetrics
 };
