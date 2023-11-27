@@ -54,7 +54,7 @@ const getUser = catchAsync(async (req, res) => {
     if (!user) {
         res.status(httpStatus.NOT_FOUND).send('User not found');
     } else {
-        res.status(httpStatus.CREATED).send(user);
+        res.status(httpStatus.OK).send(user);
     }
 });
 
@@ -88,10 +88,31 @@ const deleteUser = catchAsync(async (req, res) => {
     res.status(httpStatus.NO_CONTENT).send();
 });
 
+/**
+ * Get User ID for the given User Name
+ *
+ * @function
+ * @async
+ * @name getUserId
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} Promise that resolves with the User ID for the given user name.
+ * @throws {Error} If there is an issue fetching the User ID or sending the response.
+ */
+const getUserId = catchAsync(async (req, res) => {
+    const userId = await userService.getUserId(req.query.userName);
+    if (!userId) {
+        res.status(httpStatus.NOT_FOUND).send('User not found');
+    } else {
+        res.status(httpStatus.OK).send(userId);
+    }
+});
+
 module.exports = {
     getUsers,
     createUser,
     getUser,
     updateUser,
     deleteUser,
+    getUserId
 };
