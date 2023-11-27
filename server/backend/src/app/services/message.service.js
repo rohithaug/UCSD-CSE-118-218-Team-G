@@ -149,11 +149,11 @@ const getMetrics = async (userId, responseType) => {
             {
                 $project: {
                     messages: {
-                    $filter: {
-                        input: '$messages',
-                        as: 'message',
-                        cond: { $eq: ['$$message.readStatus', false] }
-                    }
+                        $filter: {
+                            input: '$messages',
+                            as: 'message',
+                            cond: { $eq: ['$$message.readStatus', false] }
+                        }
                     }
                 }
             }
@@ -174,7 +174,7 @@ const getMetrics = async (userId, responseType) => {
             if (item.from in result) {
                 result[item.from] += 1;
             } else {
-                result[item.from] = 0;
+                result[item.from] = 1;
             }
         });
 
