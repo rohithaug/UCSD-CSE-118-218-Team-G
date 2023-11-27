@@ -63,10 +63,15 @@ const createMessage = async (messageBody) => {
  * @function
  * @async
  * @name getMessage
- * @param {string} userId - The user's ID
+ * @param {object} query - Input Query
+ * @param {string} query.userId - The user's ID
+ * @param {string} [query.from] - The user from which the message was sent
+ * @param {boolean} [query.consolidated=true] - Flag to send messages consolidated or one by one
  * @returns {Promise<user>} - Promise that resolved to the retrieved messages.
  */
-const getMessage = async (userId) => {
+const getMessage = async (query) => {
+    const userId = query.userId;
+
     const res = await messageModel.aggregate([
             {
                 $match: { userId }
@@ -95,15 +100,34 @@ const getMessage = async (userId) => {
             }
         });
 
-        // Update the readStatus of these filtered messages to true
-        const messagesIdArray = res[0].messages.map(item => item._id);
-        await messageModel.updateMany(
-            { '_id': res[0]._id },
-            { $set: { 'messages.$[elem].readStatus': true } },
-            { arrayFilters: [{ 'elem._id': { $in: messagesIdArray } }] }
-        );
+        if (query.from) {
+            messages = messages.filter(item => item.from == query.from);
+        }
 
-        return messages;
+        let messagesIdArray;
+        if (typeof query.consolidated == 'undefined' || query.consolidated == "true" || query.consolidated == true) {
+            // Update the readStatus of these filtered messages to true
+            messagesIdArray = res[0].messages.map(item => item._id);
+            await messageModel.updateMany(
+                { '_id': res[0]._id },
+                { $set: { 'messages.$[elem].readStatus': true } },
+                { arrayFilters: [{ 'elem._id': { $in: messagesIdArray } }] }
+            );
+            return messages;
+        } else {
+            if (messages.length > 0) {
+                messages = messages[0];
+    
+                await messageModel.updateMany(
+                    { '_id': res[0]._id },
+                    { $set: { 'messages.$[elem].readStatus': true } },
+                    { arrayFilters: [{ 'elem._id': res[0].messages[0]._id }] }
+                );  
+                
+                return messages.message;
+            }
+            return "";
+        }
     }
 };
 

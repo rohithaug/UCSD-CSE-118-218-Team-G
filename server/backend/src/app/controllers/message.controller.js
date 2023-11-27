@@ -39,7 +39,7 @@ const getMessage = catchAsync(async (req, res) => {
     if (!user) {
         res.status(httpStatus.NOT_FOUND).send('User not found');
     } else {
-        const messages = await messageService.getMessage(req.query.userId);
+        const messages = await messageService.getMessage(req.query);
         res.status(httpStatus.OK).send(messages);
     }
 });
