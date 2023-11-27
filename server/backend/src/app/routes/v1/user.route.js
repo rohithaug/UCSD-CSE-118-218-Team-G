@@ -11,6 +11,9 @@ router.get("/", userController.getUsers);
 // CREATE REQUEST FOR USER
 router.post("/", userController.createUser);
 
+// GET REQUEST FOR USER ID
+router.get("/id", userController.getUserId);
+
 // GET REQUEST FOR USER
 router.get("/:userId", userController.getUser);
 
