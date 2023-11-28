@@ -110,7 +110,9 @@ const deleteUser = async (userId) => {
 const getUserId = async (userName) => {
     const user = await userModel.findOne({ name: userName });
 
-    return user?.id;
+    return {
+        userId: user?.id
+    };
 };
 
 module.exports = {
