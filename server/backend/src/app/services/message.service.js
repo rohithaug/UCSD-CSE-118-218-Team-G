@@ -92,7 +92,12 @@ const getMessage = async (query) => {
     if (!res || res.length == 0 || !res[0].messages) {
         return []
     } else {
-        messages = res[0].messages.map(item => {
+        let messages = res[0].messages;
+        if (query.from) {
+            messages = messages.filter(item => item.from == query.from);
+        }
+
+        let formattedMessages = messages.map(item => {
             return {
                 from: item.from,
                 to: item.to,
@@ -100,31 +105,27 @@ const getMessage = async (query) => {
             }
         });
 
-        if (query.from) {
-            messages = messages.filter(item => item.from == query.from);
-        }
-
         let messagesIdArray;
         if (typeof query.consolidated == 'undefined' || query.consolidated == "true" || query.consolidated == true) {
             // Update the readStatus of these filtered messages to true
-            messagesIdArray = res[0].messages.map(item => item._id);
+            messagesIdArray = messages.map(item => item._id);
             await messageModel.updateMany(
                 { '_id': res[0]._id },
                 { $set: { 'messages.$[elem].readStatus': true } },
                 { arrayFilters: [{ 'elem._id': { $in: messagesIdArray } }] }
             );
-            return messages;
+            return formattedMessages;
         } else {
-            if (messages.length > 0) {
-                messages = messages[0];
+            if (formattedMessages.length > 0) {
+                formattedMessages = formattedMessages[0];
     
                 await messageModel.updateMany(
                     { '_id': res[0]._id },
                     { $set: { 'messages.$[elem].readStatus': true } },
-                    { arrayFilters: [{ 'elem._id': res[0].messages[0]._id }] }
-                );  
+                    { arrayFilters: [{ 'elem._id': messages[0]._id }] }
+                );
                 
-                return messages.message;
+                return formattedMessages.message;
             }
             return "";
         }
@@ -161,7 +162,7 @@ const getMetrics = async (userId, responseType) => {
 
     if (!res || res.length == 0 || !res[0].messages) {
         if (responseType == 'text') {
-            return "There are no messages."
+            return "There are no unread messages."
         } else {
             return {
                 total: 0,
@@ -189,15 +190,19 @@ const getMetrics = async (userId, responseType) => {
         const totalMessages =  Object.values(result).reduce((a, b) => a + b, 0);
         const resultEntries = Object.entries(result);
         if (responseType == 'text') {
-            let responseText = `There are in total ${totalMessages} messages`;
+            let responseText = `There are in total ${totalMessages} unread messages`;
 
-            resultEntries.forEach(([key, value], idx) => {
-                if (idx == resultEntries.length - 1) {
-                    responseText = responseText.concat(` and ${value} messages from ${userNames[key]}.`);
-                } else {
-                    responseText = responseText.concat(`, ${value} messages from ${userNames[key]}`);
-                }
-            });
+            if (resultEntries.length == 1) {
+                responseText = responseText.concat(` from ${userNames[resultEntries[0][0]]}.`);
+            } else {
+                resultEntries.forEach(([key, value], idx) => {
+                    if (idx == resultEntries.length - 1) {
+                        responseText = responseText.concat(` and ${value} messages from ${userNames[key]}.`);
+                    } else {
+                        responseText = responseText.concat(`, ${value} messages from ${userNames[key]}`);
+                    }
+                });
+            }
 
             return responseText;
         } else {
