@@ -139,10 +139,10 @@ const getMessage = async (query) => {
  * @async
  * @name getMetrics
  * @param {string} userId - The user's ID
- * @param {'object'|'text'} responseType - Response Type
+ * @param {'object'|'text'} [responseType='object'] - Response Type
  * @returns {Promise<user>} - Promise that resolved to the retrieved messages.
  */
-const getMetrics = async (userId, responseType) => {
+const getMetrics = async (userId, responseType = 'object') => {
     const res = await messageModel.aggregate([
             {
                 $match: { userId }
