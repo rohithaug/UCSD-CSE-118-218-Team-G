@@ -1,6 +1,7 @@
 package com.example.watchapp;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.watchapp.model.UserMessage;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
-import com.example.watchapp.util.FileUtils;
 
 import java.util.List;
 
@@ -23,7 +23,6 @@ public class TextMessageReceive extends AppCompatActivity {
 
     private static final String TAG = "TextMessageReceive";
     private int msgId = -1;
-    private static String userId = "";
     List<UserMessage> list;
 
     @Override
@@ -31,19 +30,35 @@ public class TextMessageReceive extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.text_msg_receive);
 
-        userId = FileUtils.readUserDetails(getFilesDir());
+        Bundle extras = getIntent().getExtras();
+
+        String userId = extras.get("userId").toString();
+        String from = extras.get("id").toString();
         msgId = 0;
 
         TextView msgView = findViewById(R.id.text_msg_view);
+        msgView.setMovementMethod(new ScrollingMovementMethod());
+        Button nextBtn = findViewById(R.id.btn_next);
+        Button prevBtn = findViewById(R.id.btn_prev);
+
         RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
         Log.d(TAG, "userId : " + userId);
-        Call<List<UserMessage>> call = service.getMessages(userId);
+        Call<List<UserMessage>> call = service.getMessages(userId, from, "true");
         call.enqueue(new Callback<List<UserMessage>>() {
             @Override
             public void onResponse(Call<List<UserMessage>> call, Response<List<UserMessage>> response) {
                 Log.d(TAG, "onResponse : " + response.code() + " , " + response.body().size());
                 list = response.body();
-                msgView.setText(list.get(msgId).message);
+                if(list.size() == 0) {
+                    msgView.setText(R.string.msg_none);
+                    nextBtn.setEnabled(false);
+                    prevBtn.setEnabled(false);
+
+                } else {
+                    msgView.setText(list.get(msgId).message);
+                    nextBtn.setEnabled(true);
+                    nextBtn.setEnabled(true);
+                }
             }
 
             @Override
@@ -52,21 +67,21 @@ public class TextMessageReceive extends AppCompatActivity {
             }
         });
 
-        Button nextBtn = findViewById(R.id.btn_next);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: btn_next");
+                msgView.scrollTo(0, 0);
                 if (msgId < list.size() - 1) {
                     msgView.setText(list.get(++msgId).message);
                 }
             }
         });
-        Button prevBtn = findViewById(R.id.btn_prev);
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: btn_prev");
+                msgView.scrollTo(0, 0);
                 if (msgId > 0) {
                     msgView.setText(list.get(--msgId).message);
                 }
