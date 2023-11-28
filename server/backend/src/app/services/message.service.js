@@ -79,11 +79,11 @@ const getMessage = async (query) => {
             {
                 $project: {
                     messages: {
-                    $filter: {
-                        input: '$messages',
-                        as: 'message',
-                        cond: { $eq: ['$$message.readStatus', false] }
-                    }
+                        $filter: {
+                            input: '$messages',
+                            as: 'message',
+                            cond: { $eq: ['$$message.readStatus', false] }
+                        }
                     }
                 }
             }
@@ -125,9 +125,9 @@ const getMessage = async (query) => {
                     { arrayFilters: [{ 'elem._id': messages[0]._id }] }
                 );
                 
-                return formattedMessages.message;
+                return formattedMessages;
             }
-            return "";
+            return {};
         }
     }
 };
@@ -162,7 +162,9 @@ const getMetrics = async (userId, responseType) => {
 
     if (!res || res.length == 0 || !res[0].messages || res[0].messages.length == 0) {
         if (responseType == 'text') {
-            return "There are no unread messages."
+            return {
+                metrics: "There are no unread messages."
+            }
         } else {
             return {
                 total: 0,
@@ -204,7 +206,9 @@ const getMetrics = async (userId, responseType) => {
                 });
             }
 
-            return responseText;
+            return {
+                metrics: responseText
+            };
         } else {
             const metrics = {
                 total: totalMessages,
