@@ -160,7 +160,7 @@ const getMetrics = async (userId, responseType) => {
             }
         ]);
 
-    if (!res || res.length == 0 || !res[0].messages) {
+    if (!res || res.length == 0 || !res[0].messages || res[0].messages.length == 0) {
         if (responseType == 'text') {
             return "There are no unread messages."
         } else {
