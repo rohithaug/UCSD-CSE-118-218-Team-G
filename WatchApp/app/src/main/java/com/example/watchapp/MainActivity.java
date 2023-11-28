@@ -20,10 +20,9 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        Log.d(TAG, "onCreate : " + getFilesDir());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "getfilesdir : " + getFilesDir());
 
         TextView textView = findViewById(R.id.text1);
         textView.setOnClickListener(new View.OnClickListener() {
@@ -39,14 +38,12 @@ public class MainActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "39");
                 launchActivity("TextMessageSend");
             }
         });
         receiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "47");
                 launchActivity("TextMessageReceive");
             }
         });
@@ -57,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
         switch (name) {
             case "TextMessageSend":
-                Log.d(TAG, "55");
-                intent = new Intent(this, TextMessageSend.class);
+                intent = new Intent(this, UserListActivity.class);
+                intent.putExtra("send", true);
                 startActivity(intent);
                 break;
             case "TextMessageReceive":
-                Log.d(TAG, "65");
-                intent = new Intent(this, TextMessageReceive.class);
+                intent = new Intent(this, UserListActivity.class);
+                intent.putExtra("send", false);
                 startActivity(intent);
                 break;
             case "DebugUserIdCreate":
