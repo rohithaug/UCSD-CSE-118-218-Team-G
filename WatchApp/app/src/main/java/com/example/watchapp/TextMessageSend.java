@@ -26,13 +26,12 @@ public class TextMessageSend extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.text_msg_send);
+        Bundle extras = getIntent().getExtras();
+        String toId = extras.get("id").toString();
+        String toName = extras.get("name").toString();
+        String from = extras.get("userId").toString();
 
         RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
-
-        //TEST -- hardcoded values -- START
-        String from = "655c67b6c222a131939b0e26";
-        String to = "655c67c1c222a131939b0e29";
-        //TEST -- hardcoded values -- END
 
         Button nextBtn = findViewById(R.id.btn_send);
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +40,7 @@ public class TextMessageSend extends AppCompatActivity {
                 EditText edit = findViewById(R.id.text_input);
                 String text = edit.getText().toString();
                 Log.d(TAG, "onClick: btn_send " + text);
-                UserMessage userMessage = new UserMessage(from, to, text);
+                UserMessage userMessage = new UserMessage(from, toId, text);
                 Call<String> call = service.sendMessage(userMessage);
                 call.enqueue(new Callback<String>() {
                     @Override
@@ -53,7 +52,7 @@ public class TextMessageSend extends AppCompatActivity {
                         Log.d(TAG, "onFailure : " + t.toString());
                     }
                 });
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.msg_sent_toast, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.msg_sent_toast) + " to " + toName, Toast.LENGTH_SHORT);
                 toast.show();
             }
         });

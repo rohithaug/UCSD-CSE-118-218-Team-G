@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WatchApp</string>
     <string name="msg_sent_toast">Message sent!</string>
+    <string name="msg_none">No messages available from this user.</string>
 </resources>
