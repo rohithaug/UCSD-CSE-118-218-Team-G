@@ -1,5 +1,4 @@
-package com.example.braille;
-
+package com.example.watchapp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,12 +24,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ReadActivity extends Activity {
+public class BrailleMessageReceive extends Activity {
     private int i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read);
+        setContentView(R.layout.braille_msg_receive);
 
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);
@@ -41,6 +40,7 @@ public class ReadActivity extends Activity {
         Button dot6 = findViewById(R.id.dot6);
         Button nextButton = findViewById(R.id.next);
 
+        String user = "Juyoung";
         String sentence = "I love CSE118";
         StringBuilder brailleDots = new StringBuilder("");
 
@@ -190,6 +190,5 @@ public class ReadActivity extends Activity {
             return Collections.emptyList();
         }
     }
-
 
 }

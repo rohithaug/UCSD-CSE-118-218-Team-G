@@ -1,5 +1,4 @@
-package com.example.braille;
-
+package com.example.watchapp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,17 +19,16 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class WriteActivity extends Activity {
+public class BrailleMessageSend extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_write);
+        setContentView(R.layout.braille_msg_send);
 
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);
@@ -285,5 +283,4 @@ public class WriteActivity extends Activity {
             return Collections.emptyList();
         }
     }
-
 }

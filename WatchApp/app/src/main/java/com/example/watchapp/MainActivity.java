@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         Button sendBtn = findViewById(R.id.send);
         Button receiveBtn = findViewById(R.id.receive);
 
+        // temporary button for braille
+        Button brailleBtn = findViewById(R.id.braille);
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // temporary
+        brailleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { launchActivity("BrailleOption");}
+        });
     };
 
     private void launchActivity(String name) {
@@ -67,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, DebugUserIdCreate.class);
                 startActivity(intent);
                 break;
+            case "BrailleOption": // temporary
+                intent = new Intent(this, BrailleOption.class);
+                startActivity(intent);
         }
     }
 

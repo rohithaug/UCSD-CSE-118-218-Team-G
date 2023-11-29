@@ -35,6 +35,16 @@
             android:text="Receive"
             android:textAlignment="center"
             android:padding="5dp"/>
+
+        <Button
+            android:id="@+id/braille"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:padding="5dp"
+            android:text="Braille"
+            android:textAlignment="center" />
     </LinearLayout>
+
 
 </androidx.wear.widget.BoxInsetLayout>
