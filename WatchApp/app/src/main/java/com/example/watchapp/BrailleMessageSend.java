@@ -1,5 +1,4 @@
-package com.example.braille;
-
+package com.example.watchapp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +7,9 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.View;
+import android.view.MotionEvent;
 import android.widget.Button;
 
 import com.google.gson.Gson;
@@ -20,17 +21,19 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class WriteActivity extends Activity {
+
+public class BrailleMessageSend extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_write);
+        setContentView(R.layout.braille_msg_send);
+
+        View rootView = findViewById(android.R.id.content);
 
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);
@@ -39,8 +42,6 @@ public class WriteActivity extends Activity {
         Button dot4 = findViewById(R.id.dot4);
         Button dot5 = findViewById(R.id.dot5);
         Button dot6 = findViewById(R.id.dot6);
-        Button clearButton = findViewById(R.id.clear);
-        Button sendButton = findViewById(R.id.send);
 
         StringBuilder brailleDotsSentence = new StringBuilder("");
         StringBuilder brailleDots = new StringBuilder("000000");
@@ -51,6 +52,7 @@ public class WriteActivity extends Activity {
         List<Map<String, Map<String, String>>> brailleMap = loadJSON(this, "brailleMap.json");
         Map<String, String> brailleToAlphabet = brailleMap.get(0).get("alphabet");
         Map<String, String> brailleToNumber = brailleMap.get(1).get("number");
+
 
         dot1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,9 +120,9 @@ public class WriteActivity extends Activity {
             }
         });
 
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        // clear a letter when swipe down
+        rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageSend.this) {
+            public void onSwipeDown(View view) {
                 // clear the dots clicked so far
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
@@ -138,8 +140,8 @@ public class WriteActivity extends Activity {
             }
         });
 
-        // clear whole sentence
-        clearButton.setOnLongClickListener(new View.OnLongClickListener() {
+        // clear whole sentence when long pressed dot3
+        dot3.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 // Reset the brailleDots and brailleDotsSentence
@@ -151,10 +153,8 @@ public class WriteActivity extends Activity {
             }
         });
 
-        // register a letter
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageSend.this) {
+            public void onSwipeLeft(View view) {
                 // The end of a letter. Append to the sentence.
                 // Translate to letter
                 String letter = "";
@@ -243,8 +243,8 @@ public class WriteActivity extends Activity {
             }
         });
 
-        // send a sentence
-        sendButton.setOnLongClickListener(new View.OnLongClickListener() {
+        // long press dot6 to complete typing and send a message
+        dot6.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 // send the message
@@ -258,6 +258,7 @@ public class WriteActivity extends Activity {
             }
         });
     }
+
 
     private void vibrateWatch(int duration) {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -286,4 +287,70 @@ public class WriteActivity extends Activity {
         }
     }
 
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener (Context ctx){
+            gestureDetector = new GestureDetector(ctx, new GestureListener());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                            result = true;
+                        }
+                    }
+                    else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            onSwipeBottom();
+                        } else {
+                            onSwipeTop();
+                        }
+                        result = true;
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeTop() {
+        }
+
+        public void onSwipeBottom() {
+        }
+    }
 }

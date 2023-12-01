@@ -32,9 +32,12 @@
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Receive"
+            android:text="View"
             android:textAlignment="center"
             android:padding="5dp"/>
+
+
     </LinearLayout>
+
 
 </androidx.wear.widget.BoxInsetLayout>

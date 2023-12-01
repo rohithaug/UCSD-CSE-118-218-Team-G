@@ -1,26 +1,16 @@
-package com.example.braille;
+package com.example.watchapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.braille.databinding.ActivityMainBinding;
-
-public class MainActivity extends Activity {
-
-    private ActivityMainBinding binding;
+public class BrailleOption extends Activity {
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.braille_option);
 
         Button readButton = findViewById(R.id.readButton);
         Button writeButton = findViewById(R.id.writeButton);
@@ -28,7 +18,7 @@ public class MainActivity extends Activity {
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+                Intent intent = new Intent(BrailleOption.this, BrailleMessageReceive.class);
                 startActivity(intent);
             }
         });
@@ -36,12 +26,11 @@ public class MainActivity extends Activity {
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, WriteActivity.class);
+                Intent intent = new Intent(BrailleOption.this, BrailleMessageSend.class);
                 startActivity(intent);
             }
         });
 
     }
-
 
 }

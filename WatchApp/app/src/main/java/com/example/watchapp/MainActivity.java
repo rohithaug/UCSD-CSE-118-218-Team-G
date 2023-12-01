@@ -1,96 +1,36 @@
 package com.example.watchapp;
 
-
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-
-
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
-
-
-    @SuppressLint("MissingPermission")
+public class MainActivity extends Activity {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate : " + getFilesDir());
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_option);
 
-        TextView textView = findViewById(R.id.text1);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "textview");
-                launchActivity("DebugUserIdCreate");
-            }
-        });
-        Button sendBtn = findViewById(R.id.send);
-        Button receiveBtn = findViewById(R.id.receive);
+        Button readButton = findViewById(R.id.brailleButton);
+        Button writeButton = findViewById(R.id.textButton);
 
-        sendBtn.setOnClickListener(new View.OnClickListener() {
+        readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchActivity("TextMessageSend");
-            }
-        });
-        receiveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchActivity("TextMessageReceive");
+                Intent intent = new Intent(MainActivity.this, BrailleOption.class);
+                startActivity(intent);
             }
         });
 
-    };
-
-    private void launchActivity(String name) {
-        Intent intent;
-        switch (name) {
-            case "TextMessageSend":
-                intent = new Intent(this, UserListActivity.class);
-                intent.putExtra("send", true);
+        writeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, TextActivity.class);
                 startActivity(intent);
-                break;
-            case "TextMessageReceive":
-                intent = new Intent(this, UserListActivity.class);
-                intent.putExtra("send", false);
-                startActivity(intent);
-                break;
-            case "DebugUserIdCreate":
-                intent = new Intent(this, DebugUserIdCreate.class);
-                startActivity(intent);
-                break;
-        }
-    }
+            }
+        });
 
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    tools:context=".TextActivity" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,20 +12,20 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/readButton"
+            android:id="@+id/brailleButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
             android:layout_weight="1"
-            android:text="READ" />
+            android:text="B" />
 
         <Button
-            android:id="@+id/writeButton"
+            android:id="@+id/textButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
             android:layout_weight="1"
-            android:text="WRITE" />
+            android:text="T" />
 
     </LinearLayout>
 </FrameLayout>

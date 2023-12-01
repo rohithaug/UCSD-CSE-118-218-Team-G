@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.wear.widget.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".WriteActivity"
-    tools:deviceIds="wear">
+    android:layout_width="match_parent"
+    android:padding="@dimen/box_inset_layout_padding">
+
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -60,7 +59,7 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="0dp"
                 android:text="Dot 5" />
 
             <!-- Row 3 -->
@@ -84,27 +83,7 @@
                 android:layout_height="0dp"
                 android:text="Dot 6" />
 
-            <!-- Row 4 -->
-            <Button
-                android:id="@+id/clear"
-                android:layout_column="0"
-                android:layout_row="3"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="Clear" />
-
-            <Button
-                android:id="@+id/send"
-                android:layout_column="1"
-                android:layout_row="3"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="Send" />
-
         </GridLayout>
     </FrameLayout>
+
 </androidx.wear.widget.BoxInsetLayout>
