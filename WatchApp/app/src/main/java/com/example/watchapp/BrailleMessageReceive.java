@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -31,6 +33,8 @@ public class BrailleMessageReceive extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.braille_msg_receive);
 
+        View rootView = findViewById(android.R.id.content);
+
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);
         Button dot2 = findViewById(R.id.dot2);
@@ -38,11 +42,12 @@ public class BrailleMessageReceive extends Activity {
         Button dot4 = findViewById(R.id.dot4);
         Button dot5 = findViewById(R.id.dot5);
         Button dot6 = findViewById(R.id.dot6);
-        Button nextButton = findViewById(R.id.next);
 
+        //APP_TEMP START
         String user = "Juyoung";
-        String sentence = "I love CSE118";
+        String sentence = user + ": " + "I love CSE118!";
         StringBuilder brailleDots = new StringBuilder("");
+        //APP_TEMP END
 
         Handler handler = new Handler();
 
@@ -80,23 +85,6 @@ public class BrailleMessageReceive extends Activity {
             else {
                 // invalid input
             }
-            //else if (letterToBraille.containsKey(letter +"")) {
-            //    Log.d("Debug", String.valueOf(letter));
-            //    if (Character.isDigit(letter)) {
-            //        brailleDots.append("001111");
-            //        brailleDots.append(letterToBraille.get(letter + ""));
-            //    }
-            //    else if (Character.isUpperCase(letter)) {
-            //        brailleDots.append("000001");
-            //        brailleDots.append(letterToBraille.get((letter + "").toLowerCase(Locale.ROOT)));
-            //    } else {
-            //        brailleDots.append(letterToBraille.get(letter + ""));
-            //    }
-            //}
-            //else {
-            //    // if no letter in the map, handle error
-//
-            //}
         }
 
         String brailleDotsSentence = brailleDots.toString();
@@ -146,11 +134,19 @@ public class BrailleMessageReceive extends Activity {
         });
 
         // next letter
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageReceive.this) {
+            public void onSwipeLeft(View view) {
                 // Move to next letter
                 i += 6;
+                vibrateWatch(200);
+            }
+        });
+
+        // previous letter
+        rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageReceive.this) {
+            public void onSwipeBottom(View view) {
+                // Move to next letter
+                i -= 6;
                 vibrateWatch(200);
             }
         });
@@ -188,6 +184,73 @@ public class BrailleMessageReceive extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();
+        }
+    }
+
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener (Context ctx){
+            gestureDetector = new GestureDetector(ctx, new GestureListener());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                            result = true;
+                        }
+                    }
+                    else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            onSwipeBottom();
+                        } else {
+                            onSwipeTop();
+                        }
+                        result = true;
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeTop() {
+        }
+
+        public void onSwipeBottom() {
         }
     }
 

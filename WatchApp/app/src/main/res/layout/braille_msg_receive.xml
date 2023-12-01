@@ -58,7 +58,7 @@
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
+                android:layout_height="0dp"
                 android:text="Dot 5" />
 
             <!-- Row 3 -->
@@ -81,18 +81,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:text="Dot 6" />
-
-            <!-- Row 4 -->
-
-            <Button
-                android:id="@+id/next"
-                android:layout_column="1"
-                android:layout_row="3"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="Next" />
 
         </GridLayout>
     </FrameLayout>
