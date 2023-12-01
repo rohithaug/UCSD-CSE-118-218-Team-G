@@ -44,8 +44,8 @@ public class BrailleMessageReceive extends Activity {
         Button dot6 = findViewById(R.id.dot6);
 
         //APP_TEMP START
-        String user = "Juyoung";
-        String sentence = user + ": " + "I love CSE118!";
+        String user = "abcd";
+        String sentence = user + ":" + "ace";
         StringBuilder brailleDots = new StringBuilder("");
         //APP_TEMP END
 
@@ -133,21 +133,34 @@ public class BrailleMessageReceive extends Activity {
             }
         });
 
-        // next letter
-        rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageReceive.this) {
-            public void onSwipeLeft(View view) {
+        dot6.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View view) {
                 // Move to next letter
                 i += 6;
                 vibrateWatch(200);
+                return true;
             }
         });
 
-        // previous letter
+
+
         rootView.setOnTouchListener(new OnSwipeTouchListener(BrailleMessageReceive.this) {
-            public void onSwipeBottom(View view) {
+            // next letter
+            @Override
+            public void onSwipeLeft() {
                 // Move to next letter
+                i += 6;
+                vibrateWatch(200);
+                Log.d("Debug", "Move to next letter");
+            }
+
+            // prev letter
+            @Override
+            public void onSwipeTop() {
+                // Move to previous letter
                 i -= 6;
                 vibrateWatch(200);
+                Log.d("Debug", "Move to prev letter");
             }
         });
     }
@@ -191,18 +204,30 @@ public class BrailleMessageReceive extends Activity {
 
         private final GestureDetector gestureDetector;
 
-        public OnSwipeTouchListener (Context ctx){
-            gestureDetector = new GestureDetector(ctx, new GestureListener());
+        public OnSwipeTouchListener(Context context) {
+            gestureDetector = new GestureDetector(context, new GestureListener());
         }
 
-        @Override
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeTop() {
+        }
+
+        public void onSwipeBottom() {
+
+        }
+
         public boolean onTouch(View v, MotionEvent event) {
             return gestureDetector.onTouchEvent(event);
         }
 
         private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
-            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_DISTANCE_THRESHOLD = 100;
             private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
             @Override
@@ -212,45 +237,31 @@ public class BrailleMessageReceive extends Activity {
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                boolean result = false;
-                try {
-                    float diffY = e2.getY() - e1.getY();
-                    float diffX = e2.getX() - e1.getX();
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                            if (diffX > 0) {
-                                onSwipeRight();
-                            } else {
-                                onSwipeLeft();
-                            }
-                            result = true;
-                        }
+                float distanceX = e2.getX() - e1.getX();
+                float distanceY = e2.getY() - e1.getY();
+                if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (distanceX > 0) {
+                        Log.d("Debug", "Swipe right detected");
+                        onSwipeRight();
                     }
-                    else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffY > 0) {
-                            onSwipeBottom();
-                        } else {
-                            onSwipeTop();
-                        }
-                        result = true;
+                    else {
+                        Log.d("Debug", "Swipe left detected");
+                        onSwipeLeft();
                     }
-                } catch (Exception exception) {
-                    exception.printStackTrace();
+                    return true;
+                } else if (Math.abs(distanceY) > Math.abs(distanceX) && Math.abs(distanceY) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (distanceY > 0) {
+                        Log.d("Debug", "Swipe bottom detected");
+                        onSwipeBottom();
+                    }
+                    else {
+                        Log.d("Debug", "Swipe top detected");
+                        onSwipeTop();
+                    }
+                    return true;
                 }
-                return result;
+                return false;
             }
-        }
-
-        public void onSwipeRight() {
-        }
-
-        public void onSwipeLeft() {
-        }
-
-        public void onSwipeTop() {
-        }
-
-        public void onSwipeBottom() {
         }
     }
 
