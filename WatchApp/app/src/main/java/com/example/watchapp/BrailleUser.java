@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.watchapp.model.User;
+import com.example.watchapp.model.UserId;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
 import com.example.watchapp.util.FileUtils;
@@ -47,6 +49,7 @@ public class BrailleUser extends Activity {
         Button dot6 = findViewById(R.id.dot6);
 
         Intent intent = getIntent();
+        RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
 
         StringBuilder brailleDotsName = new StringBuilder("");
         StringBuilder brailleDots = new StringBuilder("000000");
@@ -162,22 +165,23 @@ public class BrailleUser extends Activity {
                 brailleDotsName.setLength(0);
                 Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", name - " + brailleDotsName.toString());
 
-                RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
-                Call<String> call = service.getUserId(userName);
-                call.enqueue(new Callback<String>() {
+                Call<UserId> call = service.getUserId(userName);
+                call.enqueue(new Callback<UserId>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(Call<UserId> call, Response<UserId> response) {
                         if (response.isSuccessful()) {
                             // User name exists
                             vibrateWatch(200);
-                            String userId = response.body();
-                            Log.d(TAG, "UserId for userName " + userName + ": " + userId);
+                            UserId userId = response.body();
+                            String id = userId.userId;
+                            Log.d(TAG, "UserId for userName " + userName + ": " + id);
 
-                            Intent nextIntent = intent.getBooleanExtra("send", true)
-                                    ? new Intent(BrailleUser.this, BrailleMessageSend.class)
-                                    : new Intent(BrailleUser.this, BrailleMessageReceive.class);
+                            //Intent nextIntent = intent.getBooleanExtra("send", true)
+                            //        ? new Intent(BrailleUser.this, BrailleMessageSend.class)
+                            //        : new Intent(BrailleUser.this, BrailleMessageReceive.class);
 
-                            nextIntent.putExtra("userId", userId);
+                            Intent nextIntent = new Intent(BrailleUser.this, BrailleMessageSend.class);
+                            nextIntent.putExtra("id", id);
                             nextIntent.putExtra("userName", userName);
 
                             startActivity(nextIntent);
@@ -196,7 +200,7 @@ public class BrailleUser extends Activity {
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(Call<UserId> call, Throwable t) {
                         // network errors
                         vibrateWatch(50);
                         handler.postDelayed(new Runnable() {

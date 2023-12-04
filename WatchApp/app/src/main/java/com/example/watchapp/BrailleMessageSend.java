@@ -13,6 +13,10 @@ import android.view.View;
 import android.view.MotionEvent;
 import android.widget.Button;
 
+import com.example.watchapp.model.UserMessage;
+import com.example.watchapp.restapi.RestAPIClient;
+import com.example.watchapp.restapi.RestAPIService;
+import com.example.watchapp.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,15 +30,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class BrailleMessageSend extends Activity {
-
+    private static final String TAG = "BrailleMessageSend";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.braille_msg_send);
 
         Intent intent = getIntent();
+
+        Bundle extras = getIntent().getExtras();
+        String toId = extras.get("id").toString();
+        String toName = extras.get("userName").toString();
+        String from = FileUtils.readUserDetails(getFilesDir());
+
+        Log.d(TAG, from);
 
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);
@@ -53,6 +68,8 @@ public class BrailleMessageSend extends Activity {
         List<Map<String, Map<String, String>>> brailleMap = loadJSON(this, "brailleMap.json");
         Map<String, String> brailleToAlphabet = brailleMap.get(0).get("alphabet");
         Map<String, String> brailleToNumber = brailleMap.get(1).get("number");
+
+        RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
 
         dot1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -150,13 +167,34 @@ public class BrailleMessageSend extends Activity {
             @Override
             public void onDoubleClick(View v) {
                 // send the message
-                Log.d("Debug", "Message sent: " + brailleDotsSentence.toString());
-                // Reset the brailleDots and brailleDotsSentence
-                brailleDots.setLength(0);
-                brailleDots.append("000000");
-                brailleDotsSentence.setLength(0);
-                Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
-                vibrateWatch(200);
+                if (brailleDotsSentence.length() != 0) {
+
+
+                    String text = brailleDotsSentence.toString();
+                    UserMessage userMessage = new UserMessage(from, toId, text);
+                    Call<String> call = service.sendMessage(userMessage);
+                    call.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            Log.d("Debug", "Message sent: " + text);
+                            Log.d(TAG, "onResponse : " + response.code() + " , " + response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.d(TAG, "onFailure : " + t.toString());
+                        }
+                    });
+
+                    // Reset the brailleDots and brailleDotsSentence
+                    brailleDots.setLength(0);
+                    brailleDots.append("000000");
+                    brailleDotsSentence.setLength(0);
+                    Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
+                    vibrateWatch(200);
+                }
+
+
             }
         });
 
@@ -491,10 +529,6 @@ public class BrailleMessageSend extends Activity {
 
          */
     }
-
-
-
-
 
     private void vibrateWatch(int duration) {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
