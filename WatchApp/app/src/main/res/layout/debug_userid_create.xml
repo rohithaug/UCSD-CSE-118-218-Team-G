@@ -7,7 +7,6 @@
     android:padding="0dp">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -16,13 +15,12 @@
         <EditText
             android:id="@+id/debug_userid"
             android:layout_width="match_parent"
-            android:layout_height="101dp"
+            android:layout_height="75dp"
             android:hint="@string/debug_enter_user"
             android:inputType="text" />
 
         <Button
             android:id="@+id/debug_save"
-            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="Save user"
