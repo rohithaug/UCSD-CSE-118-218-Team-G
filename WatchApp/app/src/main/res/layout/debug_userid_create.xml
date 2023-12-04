@@ -17,7 +17,7 @@
             android:id="@+id/debug_userid"
             android:layout_width="match_parent"
             android:layout_height="101dp"
-            android:hint="@string/msg_enter_user"
+            android:hint="@string/debug_enter_user"
             android:inputType="text" />
 
         <Button

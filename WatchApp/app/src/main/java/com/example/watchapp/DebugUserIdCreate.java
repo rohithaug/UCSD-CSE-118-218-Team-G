@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,8 +13,6 @@ import com.example.watchapp.model.UserId;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
 import com.example.watchapp.util.FileUtils;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +45,14 @@ public class DebugUserIdCreate extends AppCompatActivity  {
                     public void onResponse(Call<UserId> call, Response<UserId> response) {
                         Log.d(TAG, "onResponse : " + response.code() + " , " + response.body());
                         UserId userId = response.body();
-                        FileUtils.saveUserId(getFilesDir(), userId.userId);
+                        Toast toast;
+                        if (userId.userId == null) {
+                            toast = Toast.makeText(getApplicationContext(), R.string.debug_save_user_toast_failure, Toast.LENGTH_SHORT);
+                        } else {
+                            FileUtils.saveUserId(getFilesDir(), userId.userId);
+                            toast = Toast.makeText(getApplicationContext(), R.string.debug_save_user_toast_success, Toast.LENGTH_SHORT);
+                        }
+                        toast.show();
                     }
 
                     @Override
