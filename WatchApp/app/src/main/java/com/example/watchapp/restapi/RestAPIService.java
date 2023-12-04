@@ -16,6 +16,8 @@ import retrofit2.http.Query;
 public interface RestAPIService {
     @GET("user")
     public Call<List<User>> getUsers();
+    @GET("user/id")
+    public Call<String> getUserId(@Query("userName") String userName);
     @GET("message")
     public Call<List<UserMessage>> getMessages(@Query("userId") String userId, @Query("from") String from, @Query("consolidated") String consolidated);
     @POST("message")
