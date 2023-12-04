@@ -2,6 +2,7 @@ package com.example.watchapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
@@ -33,7 +34,7 @@ public class BrailleMessageSend extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.braille_msg_send);
 
-        View rootView = findViewById(android.R.id.content);
+        Intent intent = getIntent();
 
         // Reference buttons from the layout
         Button dot1 = findViewById(R.id.dot1);

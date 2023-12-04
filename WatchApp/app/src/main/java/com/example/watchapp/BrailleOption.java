@@ -18,8 +18,7 @@ public class BrailleOption extends Activity {
         readButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(BrailleOption.this, BrailleUser.class);
-                intent.putExtra("send", true);
+                Intent intent = new Intent(BrailleOption.this, BrailleMessageReceive.class);
                 startActivity(intent);
             }
         });
@@ -28,7 +27,7 @@ public class BrailleOption extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BrailleOption.this, BrailleUser.class);
-                intent.putExtra("send", false);
+                intent.putExtra("send", true);
                 startActivity(intent);
             }
         });
