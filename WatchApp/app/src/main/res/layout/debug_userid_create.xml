@@ -17,7 +17,7 @@
             android:id="@+id/debug_userid"
             android:layout_width="match_parent"
             android:layout_height="101dp"
-            android:hint="@string/app_name"
+            android:hint="@string/msg_enter_user"
             android:inputType="text" />
 
         <Button
@@ -25,7 +25,7 @@
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Save userid"
+            android:text="Save user"
             android:textAlignment="center"/>
     </LinearLayout>
 

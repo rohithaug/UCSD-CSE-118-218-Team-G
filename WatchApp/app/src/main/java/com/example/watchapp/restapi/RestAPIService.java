@@ -1,6 +1,7 @@
 package com.example.watchapp.restapi;
 
 import com.example.watchapp.model.User;
+import com.example.watchapp.model.UserId;
 import com.example.watchapp.model.UserMessage;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import retrofit2.http.Query;
 public interface RestAPIService {
     @GET("user")
     public Call<List<User>> getUsers();
+    @GET("user/id")
+    public Call<UserId> getUserIdFromName(@Query("userName") String userName);
     @GET("message")
     public Call<List<UserMessage>> getMessages(@Query("userId") String userId, @Query("from") String from, @Query("consolidated") String consolidated);
     @POST("message")
