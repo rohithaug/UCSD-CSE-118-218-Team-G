@@ -165,7 +165,7 @@ public class BrailleUser extends Activity {
                 brailleDotsName.setLength(0);
                 Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", name - " + brailleDotsName.toString());
 
-                Call<UserId> call = service.getUserId(userName);
+                Call<UserId> call = service.getUserIdFromName(userName);
                 call.enqueue(new Callback<UserId>() {
                     @Override
                     public void onResponse(Call<UserId> call, Response<UserId> response) {

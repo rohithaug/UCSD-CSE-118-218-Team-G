@@ -6,7 +6,7 @@ public class UserId {
     @SerializedName("userId")
     public String userId;
 
-    public UserId(String userId) {
-        this.userId = userId;
+    public UserId(String name) {
+        this.userId = name;
     }
 }
