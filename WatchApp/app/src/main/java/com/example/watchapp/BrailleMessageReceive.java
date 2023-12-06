@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import com.example.watchapp.model.UserMessage;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
+import com.example.watchapp.util.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +41,11 @@ public class BrailleMessageReceive extends Activity {
 
     private static final String TAG = "BrailleMessageReceive";
     private int i;
+    private int j;
     private GestureDetector gestureDetectorDot3;
     private GestureDetector gestureDetectorDot6;
+    private int msgId = -1;
+    List<UserMessage> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +60,15 @@ public class BrailleMessageReceive extends Activity {
         Button dot5 = findViewById(R.id.dot5);
         Button dot6 = findViewById(R.id.dot6);
 
-
         //APP_TEMP START
-        String user = "abcd";
-        String sentence = user + ":" + "ace";
-        StringBuilder brailleDots = new StringBuilder("");
+        //String user = "abcd";
+        //String sentence = user + ":" + "ace";
+        //StringBuilder brailleDots = new StringBuilder("");
         //APP_TEMP END
 
         Handler handler = new Handler();
 
-        // reverse key & value, merge Maps b/c no key overlaps
+        // reverse key & value
         List<Map<String, Map<String, String>>> brailleMap = loadJSON(this, "brailleMap.json");
         Map<String, String> brailleToAlphabet = brailleMap.get(0).get("alphabet");
         Map<String, String> brailleToNumber = brailleMap.get(1).get("number");
@@ -78,72 +82,99 @@ public class BrailleMessageReceive extends Activity {
             letterToBraille.put(entry.getValue(), entry.getKey());
         }
 
-        for (int i = 0; i < sentence.length(); i++) {
-            char letter = sentence.charAt(i);
-            Log.d(TAG, String.valueOf(letter));
-            if (letter == ' ')  {
-                brailleDots.append("000000");
+        RestAPIService service = RestAPIClient.getClient().create(RestAPIService.class);
+
+        String userId = FileUtils.readUserDetails(getFilesDir());
+
+        Call<List<UserMessage>> call = service.getAllMessages(userId);
+
+        List<String> textMessages = new ArrayList<>();
+        List<String> brailleMessages = new ArrayList<>();
+        StringBuilder brailleDots = new StringBuilder("");
+
+        call.enqueue(new Callback<List<UserMessage>>() {
+            @Override
+            public void onResponse(Call<List<UserMessage>> call, Response<List<UserMessage>> response) {
+                Log.d(TAG, "onResponse : " + response.code() + " , " + response.body().size());
+                list = response.body();
+                for (int i = 0; i < list.size(); i++) {
+                    textMessages.add(list.get(i).from);
+                }
             }
-            else if (Character.isDigit(letter)) {
-                brailleDots.append("001111");
-                brailleDots.append(letterToBraille.get(letter + ""));
+
+            @Override
+            public void onFailure(Call<List<UserMessage>> call, Throwable t) {
+                Log.d(TAG, "onFailure : " + t.toString());
             }
-            else if (Character.isUpperCase(letter) && letterToBraille.containsKey((letter +"").toLowerCase())) {
-                brailleDots.append("000001");
-                brailleDots.append(letterToBraille.get((letter + "").toLowerCase(Locale.ROOT)));
+        });
+
+        // Translate text messages to braille patterns
+        for (int l = 0; l < textMessages.size(); l++) {
+            String textMessage = textMessages.get(l);
+            for (int k = 0; k < textMessage.length(); k++) {
+                char letter = textMessage.charAt(k);
+                Log.d(TAG, String.valueOf(letter));
+                if (letter == ' ') {
+                    brailleDots.append("000000");
+                } else if (Character.isDigit(letter)) {
+                    brailleDots.append("001111");
+                    brailleDots.append(letterToBraille.get(letter + ""));
+                } else if (Character.isUpperCase(letter) && letterToBraille.containsKey((letter + "").toLowerCase())) {
+                    brailleDots.append("000001");
+                    brailleDots.append(letterToBraille.get((letter + "").toLowerCase(Locale.ROOT)));
+                } else if (letterToBraille.containsKey(letter + "")) {
+                    brailleDots.append(letterToBraille.get(letter + ""));
+                } else {
+                    // invalid input
+                }
             }
-            else if (letterToBraille.containsKey(letter + "")) {
-                brailleDots.append(letterToBraille.get(letter + ""));
-            }
-            else {
-                // invalid input
-            }
+            brailleMessages.add(brailleDots.toString());
+            brailleDots.setLength(0);
         }
 
-        String brailleDotsSentence = brailleDots.toString();
-        Log.d(TAG, "Sentence into braille dots:" + brailleDotsSentence);
-
         i = 0;
+        j = 0;
+
         /*
         dot1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i);
+                handleDotClick(brailleMessage, i);
             }
         });
 
         dot2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i + 1);
+                handleDotClick(brailleMessage, i + 1);
             }
         });
 
         dot3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i + 2);
+                handleDotClick(brailleMessage, i + 2);
             }
         });
 
         dot4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i + 3);
+                handleDotClick(brailleMessage, i + 3);
             }
         });
 
         dot5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i + 4);
+                handleDotClick(brailleMessage, i + 4);
             }
         });
 
         dot6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleDotClick(brailleDotsSentence, i + 5);
+                handleDotClick(brailleMessage, i + 5);
             }
         });
 
@@ -152,45 +183,71 @@ public class BrailleMessageReceive extends Activity {
         dot1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i);
+                }
+                else {
+                    return false;
+                }
             }
         });
 
         dot2.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i + 1);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i + 1);
+                } else {
+                    return false;
+                }
             }
         });
 
         dot3.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i + 2);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i + 2);
+                } else {
+                    return false;
+                }
             }
         });
 
         dot4.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i + 3);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i + 3);
+                } else {
+                    return false;
+                }
             }
         });
 
         dot5.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i + 4);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i + 4);
+                } else {
+                    return false;
+                }
             }
         });
 
         dot6.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                return handleDotClick(brailleDotsSentence, i + 5);
+                if (!brailleMessages.isEmpty()) {
+                    return handleDotClick(brailleMessages.get(j), i + 5);
+                } else {
+                    return false;
+                }
             }
         });
 
+        // Move to previous letter when double click dot3
         dot3.setOnClickListener(new DoubleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -200,14 +257,18 @@ public class BrailleMessageReceive extends Activity {
             @Override
             public void onDoubleClick(View v) {
                 // Move to prev letter
+                Log.d(TAG, "Double-tap detected on the dot3.");
                 if (i - 6 >= 0) {
                     i -= 6;
                     vibrateWatch(200); // vibrates when prev letter exists (otherwise nothing happens)
+                    Log.d(TAG, "Move to previous letter.");
                 }
-                Log.d(TAG, "Double-tap detected on the dot3");
+                Log.d(TAG,"Start of the sentence.");
+
             }
         });
 
+        // move to the next letter when double click dot6
         dot6.setOnClickListener(new DoubleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -217,13 +278,63 @@ public class BrailleMessageReceive extends Activity {
             @Override
             public void onDoubleClick(View v) {
                 // Move to prev letter
-                if (i + 6 < sentence.length()) {
+                Log.d(TAG, "Double-tap detected on the dot6.");
+                if (!brailleMessages.isEmpty() && (i + 6 < brailleMessages.get(j).length())) {
                     i += 6;
                     vibrateWatch(200); // vibrates when next letter exists (otherwise nothing happens)
+                    Log.d(TAG, "Move to the next letter.");
                 }
-                Log.d(TAG, "Double-tap detected on the dot6");
+                else {
+                    Log.d(TAG, "End of the sentence.");
+                }
             }
         });
+
+        // move to previous message when double click dot 1
+        dot1.setOnClickListener(new DoubleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+
+            }
+
+            @Override
+            public void onDoubleClick(View v) {
+                Log.d(TAG, "Double-tap detected on the dot1.");
+                // Move to prev letter
+                if (j > 0) {
+                    j--;
+                    i = 0;
+                    vibrateWatch(200); // vibrates when previous message exists (otherwise nothing happens)
+                    Log.d(TAG, "Move to previous message");
+                } else {
+                    Log.d(TAG, "No previous messages exist");
+                }
+            }
+        });
+
+        // move to next message when double click dot 4
+        dot4.setOnClickListener(new DoubleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+
+            }
+
+            @Override
+            public void onDoubleClick(View v) {
+                Log.d(TAG, "Double-tap detected on the dot4.");
+                // Move to prev letter
+                if (j < brailleMessages.size() - 1) {
+                    j++;
+                    i = 0;
+                    vibrateWatch(200); // vibrates when next message exists (otherwise nothing happens)
+                    Log.d(TAG, "Move to next message.");
+                } else {
+                    Log.d(TAG, "No next messages exist");
+                }
+            }
+        });
+
+
 
         /*
         gestureDetectorDot3 = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {

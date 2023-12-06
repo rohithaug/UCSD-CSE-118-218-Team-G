@@ -46,7 +46,7 @@ public class BrailleMessageSend extends Activity {
 
         Bundle extras = getIntent().getExtras();
         String toId = extras.get("id").toString();
-        String toName = extras.get("userName").toString();
+        // String toName = extras.get("userName").toString();
         String from = FileUtils.readUserDetails(getFilesDir());
 
         Log.d(TAG, from);
@@ -76,7 +76,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(0, '1');
-                Log.d("Debug", "Dot1 clicked");
+                Log.d(TAG, "Dot1 clicked");
                 return true;
             }
         });
@@ -86,7 +86,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(1, '1');
-                Log.d("Debug", "Dot2 clicked");
+                Log.d(TAG, "Dot2 clicked");
                 return true;
             }
         });
@@ -96,7 +96,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(2, '1');
-                Log.d("Debug", "Dot3 clicked");
+                Log.d(TAG, "Dot3 clicked");
                 return true;
             }
         });
@@ -106,7 +106,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(3, '1');
-                Log.d("Debug", "Dot4 clicked");
+                Log.d(TAG, "Dot4 clicked");
                 return true;
             }
         });
@@ -116,7 +116,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(4, '1');
-                Log.d("Debug", "Dot5 clicked");
+                Log.d(TAG, "Dot5 clicked");
                 return true;
             }
         });
@@ -126,7 +126,7 @@ public class BrailleMessageSend extends Activity {
             public boolean onLongClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(5, '1');
-                Log.d("Debug", "Dot6 clicked");
+                Log.d(TAG, "Dot6 clicked");
                 return true;
             }
         });
@@ -143,7 +143,7 @@ public class BrailleMessageSend extends Activity {
                 // clear whole sentence
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
-                Log.d("Debug", "Double-tap on Dot3. BrailleDots is reset to " + brailleDots.toString());
+                Log.d(TAG, "Double-tap on Dot3. BrailleDots is reset to " + brailleDots.toString());
 
                 vibrateWatch(50);
                 // Schedule the second vibration with a delay of 50 milliseconds
@@ -176,7 +176,7 @@ public class BrailleMessageSend extends Activity {
                     call.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
-                            Log.d("Debug", "Message sent: " + text);
+                            Log.d(TAG, "Message sent: " + text);
                             Log.d(TAG, "onResponse : " + response.code() + " , " + response.body());
                         }
 
@@ -190,7 +190,7 @@ public class BrailleMessageSend extends Activity {
                     brailleDots.setLength(0);
                     brailleDots.append("000000");
                     brailleDotsSentence.setLength(0);
-                    Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
+                    Log.d(TAG, "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
                     vibrateWatch(200);
                 }
 
@@ -210,7 +210,7 @@ public class BrailleMessageSend extends Activity {
                 // clear the dots clicked so far
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
-                Log.d("Debug", "Double-tap on Dot3. BrailleDots is reset to " + brailleDots.toString());
+                Log.d(TAG, "Double-tap on Dot3. BrailleDots is reset to " + brailleDots.toString());
 
                 vibrateWatch(50);
                 // Schedule the second vibration with a delay of 50 milliseconds
@@ -247,7 +247,7 @@ public class BrailleMessageSend extends Activity {
                     // Reset the brailleDots
                     brailleDots.setLength(0);
                     brailleDots.append("000000");
-                    Log.d("Debug", "Number indicator clicked. Reset: " + brailleDots.toString());
+                    Log.d(TAG, "Number indicator clicked. Reset: " + brailleDots.toString());
                     vibrateWatch(200);
                     return;
                 } else if ("000001".equals(brailleCharacter)) {     // number indicator
@@ -258,7 +258,7 @@ public class BrailleMessageSend extends Activity {
                     // Reset the brailleDots
                     brailleDots.setLength(0);
                     brailleDots.append("000000");
-                    Log.d("Debug", "Capital indicator clicked. Reset: " + brailleDots.toString());
+                    Log.d(TAG, "Capital indicator clicked. Reset: " + brailleDots.toString());
                     vibrateWatch(200);
                     return;
                 } else if ( brailleIndicator.toString().equals("number")){
@@ -311,12 +311,12 @@ public class BrailleMessageSend extends Activity {
                         return;
                     }
                 }
-                Log.d("Debug", "Final dots: " +  brailleDots.toString() + " " + letter);
+                Log.d(TAG, "Final dots: " +  brailleDots.toString() + " " + letter);
                 brailleDotsSentence.append(letter);
                 // Reset the brailleDots
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
-                Log.d("Debug", "Reset: " + brailleDots.toString());
+                Log.d(TAG, "Reset: " + brailleDots.toString());
                 vibrateWatch(200);
             }
         });
@@ -327,7 +327,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(0, '1');
-                Log.d("Debug", "Dot1 clicked");
+                Log.d(TAG, "Dot1 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -338,7 +338,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(1, '1');
-                Log.d("Debug", "Dot2 clicked");
+                Log.d(TAG, "Dot2 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -349,7 +349,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(2, '1');
-                Log.d("Debug", "Dot3 clicked");
+                Log.d(TAG, "Dot3 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -360,7 +360,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(3, '1');
-                Log.d("Debug", "Dot4 clicked");
+                Log.d(TAG, "Dot4 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -371,7 +371,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(4, '1');
-                Log.d("Debug", "Dot5 clicked");
+                Log.d(TAG, "Dot5 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -382,7 +382,7 @@ public class BrailleMessageSend extends Activity {
             public void onClick(View view) {
                 // dot1 clicked, store this info
                 brailleDots.setCharAt(5, '1');
-                Log.d("Debug", "Dot6 clicked");
+                Log.d(TAG, "Dot6 clicked");
                 // vibrate to let the user that the button has been clicked
                 vibrateWatch(50);
             }
@@ -396,7 +396,7 @@ public class BrailleMessageSend extends Activity {
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
                 brailleDotsSentence.setLength(0);
-                Log.d("Debug", "Clear is long pressed. Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
+                Log.d(TAG, "Clear is long pressed. Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
                 return true; // Return true to indicate that the long click is consumed
             }
         });
@@ -419,7 +419,7 @@ public class BrailleMessageSend extends Activity {
                     // Reset the brailleDots
                     brailleDots.setLength(0);
                     brailleDots.append("000000");
-                    Log.d("Debug", "Number indicator clicked. Reset: " + brailleDots.toString());
+                    Log.d(TAG, "Number indicator clicked. Reset: " + brailleDots.toString());
                     vibrateWatch(200);
                     return;
                 } else if ("000001".equals(brailleCharacter)) {     // number indicator
@@ -430,7 +430,7 @@ public class BrailleMessageSend extends Activity {
                     // Reset the brailleDots
                     brailleDots.setLength(0);
                     brailleDots.append("000000");
-                    Log.d("Debug", "Capital indicator clicked. Reset: " + brailleDots.toString());
+                    Log.d(TAG, "Capital indicator clicked. Reset: " + brailleDots.toString());
                     vibrateWatch(200);
                     return;
                 } else if ( brailleIndicator.toString().equals("number")){
@@ -483,12 +483,12 @@ public class BrailleMessageSend extends Activity {
                         return;
                     }
                 }
-                Log.d("Debug", "Final dots: " +  brailleDots.toString() + " " + letter);
+                Log.d(TAG, "Final dots: " +  brailleDots.toString() + " " + letter);
                 brailleDotsSentence.append(letter);
                 // Reset the brailleDots
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
-                Log.d("Debug", "Reset: " + brailleDots.toString());
+                Log.d(TAG, "Reset: " + brailleDots.toString());
                 vibrateWatch(200);
             }
 
@@ -498,7 +498,7 @@ public class BrailleMessageSend extends Activity {
                 // clear the dots clicked so far
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
-                Log.d("Debug", "Clear clicked. BrailleDots is reset to " + brailleDots.toString());
+                Log.d(TAG, "Clear clicked. BrailleDots is reset to " + brailleDots.toString());
 
                 vibrateWatch(50);
                 // Schedule the second vibration with a delay of 50 milliseconds
@@ -517,12 +517,12 @@ public class BrailleMessageSend extends Activity {
             @Override
             public boolean onLongClick(View view) {
                 // send the message
-                Log.d("Debug", "Message sent: " + brailleDotsSentence.toString());
+                Log.d(TAG, "Message sent: " + brailleDotsSentence.toString());
                 // Reset the brailleDots and brailleDotsSentence
                 brailleDots.setLength(0);
                 brailleDots.append("000000");
                 brailleDotsSentence.setLength(0);
-                Log.d("Debug", "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
+                Log.d(TAG, "Reset: dots - " + brailleDots.toString() + ", sentence - " + brailleDotsSentence.toString());
                 return true; // Return true to indicate that the long click is consumed
             }
         });
@@ -538,7 +538,7 @@ public class BrailleMessageSend extends Activity {
                 // Vibrate for 200 milliseconds
                 VibrationEffect vibrationEffect = VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE);
                 vibrator.vibrate(vibrationEffect);
-                Log.d("Debug", "vibrating");
+                Log.d(TAG, "vibrating");
             }
         }
     }
@@ -613,7 +613,7 @@ public class BrailleMessageSend extends Activity {
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                Log.d("Debug", "onfling called");
+                Log.d(TAG, "onfling called");
                 if (e1 != null && e2 != null) {
                     float distanceX = e2.getX() - e1.getX();
                     float distanceY = e2.getY() - e1.getY();

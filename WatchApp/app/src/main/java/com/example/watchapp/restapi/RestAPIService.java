@@ -21,6 +21,8 @@ public interface RestAPIService {
     public Call<UserId> getUserId(@Query("userName") String userName);
     @GET("message")
     public Call<List<UserMessage>> getMessages(@Query("userId") String userId, @Query("from") String from, @Query("consolidated") String consolidated);
+    @GET("message")
+    public Call<List<UserMessage>> getAllMessages(@Query("userId") String userId);
     @POST("message")
     public Call<String> sendMessage(@Body UserMessage userMessage);
 }
