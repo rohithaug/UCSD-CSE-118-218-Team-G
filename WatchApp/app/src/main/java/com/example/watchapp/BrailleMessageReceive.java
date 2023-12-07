@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.example.watchapp.model.User;
 import com.example.watchapp.model.UserMessage;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
@@ -60,11 +61,6 @@ public class BrailleMessageReceive extends Activity {
         Button dot5 = findViewById(R.id.dot5);
         Button dot6 = findViewById(R.id.dot6);
 
-        //APP_TEMP START
-        //String user = "abcd";
-        //String sentence = user + ":" + "ace";
-        //StringBuilder brailleDots = new StringBuilder("");
-        //APP_TEMP END
 
         Handler handler = new Handler();
 
@@ -97,88 +93,55 @@ public class BrailleMessageReceive extends Activity {
             public void onResponse(Call<List<UserMessage>> call, Response<List<UserMessage>> response) {
                 Log.d(TAG, "onResponse : " + response.code() + " , " + response.body().size());
                 list = response.body();
+                String fromId;
                 for (int i = 0; i < list.size(); i++) {
-                    textMessages.add(list.get(i).from);
+                    fromId = list.get(i).from;
+                    String message = list.get(i).message;
+
+                    Call<User> call2 = service.getUserFromId(fromId);
+                    call2.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            if (response.isSuccessful()) {
+                                User user = response.body();
+                                String username = user.name;
+
+                                textMessages.add(username + ":" + message);
+                                Log.d(TAG, username + ":" + message);
+
+                                if (textMessages.size() == list.size()) {
+                                    translateMessages(textMessages, brailleMessages, brailleDots, letterToBraille);
+                                }
+
+                            } else {
+                                Log.e("Error", "Failed to retrieve user details. Response code: " + response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            if (textMessages.size() == list.size()) {
+                                translateMessages(textMessages, brailleMessages, brailleDots, letterToBraille);
+                            }
+                            Log.e("Error", "Failed to make the user details API call: " + t.getMessage());
+                        }
+                    });
                 }
+
             }
 
             @Override
             public void onFailure(Call<List<UserMessage>> call, Throwable t) {
+                if (textMessages.size() == list.size()) {
+                    translateMessages(textMessages, brailleMessages, brailleDots, letterToBraille);
+                }
                 Log.d(TAG, "onFailure : " + t.toString());
             }
         });
 
-        // Translate text messages to braille patterns
-        for (int l = 0; l < textMessages.size(); l++) {
-            String textMessage = textMessages.get(l);
-            for (int k = 0; k < textMessage.length(); k++) {
-                char letter = textMessage.charAt(k);
-                Log.d(TAG, String.valueOf(letter));
-                if (letter == ' ') {
-                    brailleDots.append("000000");
-                } else if (Character.isDigit(letter)) {
-                    brailleDots.append("001111");
-                    brailleDots.append(letterToBraille.get(letter + ""));
-                } else if (Character.isUpperCase(letter) && letterToBraille.containsKey((letter + "").toLowerCase())) {
-                    brailleDots.append("000001");
-                    brailleDots.append(letterToBraille.get((letter + "").toLowerCase(Locale.ROOT)));
-                } else if (letterToBraille.containsKey(letter + "")) {
-                    brailleDots.append(letterToBraille.get(letter + ""));
-                } else {
-                    // invalid input
-                }
-            }
-            brailleMessages.add(brailleDots.toString());
-            brailleDots.setLength(0);
-        }
 
         i = 0;
         j = 0;
-
-        /*
-        dot1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i);
-            }
-        });
-
-        dot2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i + 1);
-            }
-        });
-
-        dot3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i + 2);
-            }
-        });
-
-        dot4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i + 3);
-            }
-        });
-
-        dot5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i + 4);
-            }
-        });
-
-        dot6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDotClick(brailleMessage, i + 5);
-            }
-        });
-
-         */
 
         dot1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -262,9 +225,9 @@ public class BrailleMessageReceive extends Activity {
                     i -= 6;
                     vibrateWatch(200); // vibrates when prev letter exists (otherwise nothing happens)
                     Log.d(TAG, "Move to previous letter.");
+                } else {
+                    Log.d(TAG, "Start of the sentence.");
                 }
-                Log.d(TAG,"Start of the sentence.");
-
             }
         });
 
@@ -334,7 +297,50 @@ public class BrailleMessageReceive extends Activity {
             }
         });
 
+        /*
+        dot1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i);
+            }
+        });
 
+        dot2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i + 1);
+            }
+        });
+
+        dot3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i + 2);
+            }
+        });
+
+        dot4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i + 3);
+            }
+        });
+
+        dot5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i + 4);
+            }
+        });
+
+        dot6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleDotClick(brailleMessage, i + 5);
+            }
+        });
+
+         */
 
         /*
         gestureDetectorDot3 = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
@@ -471,6 +477,38 @@ public class BrailleMessageReceive extends Activity {
         public abstract void onSingleClick(View v);
         public abstract void onDoubleClick(View v);
     }
+
+    // Translate text messages to braille patterns
+    private void translateMessages(List<String> textMessages, List<String> brailleMessages, StringBuilder brailleDots, Map<String, String> letterToBraille) {
+        for (int l = 0; l < textMessages.size(); l++) {
+            String textMessage = textMessages.get(l);
+            for (int k = 0; k < textMessage.length(); k++) {
+                char letter = textMessage.charAt(k);
+                Log.d(TAG, String.valueOf(letter));
+                if (letter == ' ') {
+                    brailleDots.append("000000");
+                } else if (Character.isDigit(letter)) {
+                    brailleDots.append("001111");
+                    brailleDots.append(letterToBraille.get(letter + ""));
+                } else if (Character.isUpperCase(letter) && letterToBraille.containsKey((letter + "").toLowerCase())) {
+                    brailleDots.append("000001");
+                    brailleDots.append(letterToBraille.get((letter + "").toLowerCase(Locale.ROOT)));
+                } else if (letterToBraille.containsKey(letter + "")) {
+                    brailleDots.append(letterToBraille.get(letter + ""));
+                } else {
+                    // invalid input
+                }
+            }
+            brailleMessages.add(brailleDots.toString());
+            for (String msg : brailleMessages) {
+                Log.d(TAG, msg);
+            }
+            brailleDots.setLength(0);
+        }
+    }
+
+
+
 
 
 
