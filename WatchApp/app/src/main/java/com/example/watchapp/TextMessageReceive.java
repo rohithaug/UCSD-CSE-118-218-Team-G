@@ -49,14 +49,16 @@ public class TextMessageReceive extends AppCompatActivity {
             public void onResponse(Call<List<UserMessage>> call, Response<List<UserMessage>> response) {
                 Log.d(TAG, "onResponse : " + response.code() + " , " + response.body().size());
                 list = response.body();
-                if(list.size() == 0) {
-                    msgView.setText(R.string.msg_none);
+                prevBtn.setEnabled(false);
+                if(list.size() == 0 || list.size() == 1) {
                     nextBtn.setEnabled(false);
-                    prevBtn.setEnabled(false);
-
+                    if(list.size() == 0) {
+                        msgView.setText(R.string.msg_none);
+                    } else {
+                        msgView.setText(list.get(msgId).message);
+                    }
                 } else {
                     msgView.setText(list.get(msgId).message);
-                    nextBtn.setEnabled(true);
                     nextBtn.setEnabled(true);
                 }
             }
@@ -74,6 +76,12 @@ public class TextMessageReceive extends AppCompatActivity {
                 msgView.scrollTo(0, 0);
                 if (msgId < list.size() - 1) {
                     msgView.setText(list.get(++msgId).message);
+                    prevBtn.setEnabled(true);
+                }
+                if(msgId == list.size() - 1) {
+                    nextBtn.setEnabled(false);
+                } else {
+                    nextBtn.setEnabled(true);
                 }
             }
         });
@@ -84,6 +92,12 @@ public class TextMessageReceive extends AppCompatActivity {
                 msgView.scrollTo(0, 0);
                 if (msgId > 0) {
                     msgView.setText(list.get(--msgId).message);
+                    nextBtn.setEnabled(true);
+                }
+                if(msgId == 0) {
+                    prevBtn.setEnabled(false);
+                } else {
+                    prevBtn.setEnabled(true);
                 }
             }
         });
