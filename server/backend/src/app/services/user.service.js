@@ -108,7 +108,7 @@ const deleteUser = async (userId) => {
  * @returns {Promise<userId>} - Promise that resolved to the retrieved user ID.
  */
 const getUserId = async (userName) => {
-    const user = await userModel.findOne({ name: { $regex : new RegExp(userName, "i") } });
+    const user = await userModel.findOne({ name: { $regex : new RegExp(`^${userName}$`, "i") } });
 
     return {
         userId: user?.id
