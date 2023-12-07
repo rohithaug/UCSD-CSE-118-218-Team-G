@@ -163,7 +163,8 @@ const getMetrics = async (userId, responseType = 'object') => {
     if (!res || res.length == 0 || !res[0].messages || res[0].messages.length == 0) {
         if (responseType == 'text') {
             return {
-                metrics: "There are no unread messages."
+                metrics: "There are no unread messages.",
+                userCount: 0
             }
         } else {
             return {
