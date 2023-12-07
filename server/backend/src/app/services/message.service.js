@@ -207,7 +207,8 @@ const getMetrics = async (userId, responseType = 'object') => {
             }
 
             return {
-                metrics: responseText
+                metrics: responseText,
+                userCount: resultEntries.length
             };
         } else {
             const metrics = {
