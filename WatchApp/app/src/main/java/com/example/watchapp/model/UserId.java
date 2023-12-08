@@ -1,6 +1,5 @@
 package com.example.watchapp.model;
 
-
 import com.google.gson.annotations.SerializedName;
 
 public class UserId {

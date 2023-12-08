@@ -12,6 +12,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RestAPIService {
@@ -19,8 +20,12 @@ public interface RestAPIService {
     public Call<List<User>> getUsers();
     @GET("user/id")
     public Call<UserId> getUserIdFromName(@Query("userName") String userName);
+    @GET("user/{id}")
+    public Call<User> getUserFromId(@Path("id") String userId);
     @GET("message")
     public Call<List<UserMessage>> getMessages(@Query("userId") String userId, @Query("from") String from, @Query("consolidated") String consolidated);
+    @GET("message")
+    public Call<List<UserMessage>> getAllMessages(@Query("userId") String userId);
     @POST("message")
     public Call<String> sendMessage(@Body UserMessage userMessage);
 }
