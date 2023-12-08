@@ -5,4 +5,8 @@
     <string name="debug_enter_user">Enter user name.</string>
     <string name="debug_save_user_toast_success">Saved user id!</string>
     <string name="debug_save_user_toast_failure">Failed to save user id!</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_view">View</string>
+    <string name="text_msgs">Messages</string>
+    <string name="edit_msg">Enter message here.</string>
 </resources>
