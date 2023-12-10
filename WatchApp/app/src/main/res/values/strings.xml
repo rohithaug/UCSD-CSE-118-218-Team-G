@@ -6,7 +6,13 @@
     <string name="debug_save_user_toast_success">Saved user id!</string>
     <string name="debug_save_user_toast_failure">Failed to save user id!</string>
     <string name="btn_send">Send</string>
-    <string name="btn_view">View</string>
+    <string name="btn_write">Write</string>
+    <string name="btn_view">Read</string>
+    <string name = "btn_debug_save">Save user</string>
     <string name="text_msgs">Messages</string>
+    <string name="btn_prev">Previous message</string>
+    <string name="btn_next">Next message</string>
     <string name="edit_msg">Enter message here.</string>
+    <string name="braille">Braille</string>
+    <string name="type">Type</string>
 </resources>

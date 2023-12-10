@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.MotionEvent;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.watchapp.model.UserMessage;
 import com.example.watchapp.restapi.RestAPIClient;
 import com.example.watchapp.restapi.RestAPIService;
@@ -35,7 +37,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class BrailleMessageSend extends Activity {
+public class BrailleMessageSend extends AppCompatActivity {
     private static final String TAG = "BrailleMessageSend";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

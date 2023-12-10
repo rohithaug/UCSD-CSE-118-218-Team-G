@@ -20,14 +20,14 @@
             android:text="@string/text_msgs"
             android:textAlignment="center"/>
         <Button
-            android:id="@+id/send"
+            android:id="@+id/writeT"
             android:layout_marginTop="20dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="@string/btn_send"
+            android:text="@string/btn_write"
             android:textAlignment="center" />
         <Button
-            android:id="@+id/receive"
+            android:id="@+id/readT"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="@string/btn_view"

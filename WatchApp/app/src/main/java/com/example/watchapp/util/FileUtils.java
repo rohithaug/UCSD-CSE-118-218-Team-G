@@ -13,6 +13,12 @@ import java.io.InputStreamReader;
 public class FileUtils {
     private static final String TAG = "WatchAppFileUtils";
     private static final String userFileName = "user_details.txt";
+
+    /**
+     *
+     * @param path The File path to read the user id from.
+     * @return The user id registered on the device.
+     */
     public static String readUserDetails(File path) {
         Log.d(TAG, "readUserDetails : " +path.getPath());
         File file = new File(path, userFileName);
@@ -35,6 +41,11 @@ public class FileUtils {
         return line;
     }
 
+    /**
+     *
+     * @param path The File path to read the user id from.
+     * @param userId The user id to register on the device.
+     */
     public static void saveUserId(File path, String userId) {
         Log.d(TAG, "saveUserId: " + path.getPath() + " , " + userId);
         File file = new File(path, userFileName);

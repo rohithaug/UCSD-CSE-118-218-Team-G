@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.watchapp.model.User;
 import com.example.watchapp.model.UserId;
 import com.example.watchapp.restapi.RestAPIClient;
@@ -33,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BrailleUser extends Activity {
+public class BrailleUser extends AppCompatActivity {
     private static final String TAG = "BrailleFrom";
 
     @Override
