@@ -32,8 +32,8 @@ public class TextActivity extends AppCompatActivity {
                 launchActivity("DebugUserIdCreate");
             }
         });
-        Button sendBtn = findViewById(R.id.send);
-        Button receiveBtn = findViewById(R.id.receive);
+        Button sendBtn = findViewById(R.id.writeT);
+        Button receiveBtn = findViewById(R.id.readT);
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override

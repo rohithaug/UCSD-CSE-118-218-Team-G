@@ -23,7 +23,7 @@
             android:id="@+id/debug_save"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Save user"
+            android:text="@string/btn_debug_save"
             android:textAlignment="center"/>
     </LinearLayout>
 

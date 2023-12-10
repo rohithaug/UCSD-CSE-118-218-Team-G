@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.watchapp.model.User;
 import com.example.watchapp.model.UserMessage;
 import com.example.watchapp.restapi.RestAPIClient;
@@ -38,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BrailleMessageReceive extends Activity {
+public class BrailleMessageReceive extends AppCompatActivity {
 
     private static final String TAG = "BrailleMessageReceive";
     private int i;

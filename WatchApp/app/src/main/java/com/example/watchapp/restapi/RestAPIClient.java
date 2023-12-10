@@ -13,9 +13,12 @@ public class RestAPIClient {
 
     private static Retrofit retrofit = null;
 
+    /**
+     * Returns a Retrofit2 instance to make HTTP requests to the server.
+     * @return The Retrofit instance.
+     */
     public static Retrofit getClient() {
 
-//        final String BASE_URL = "https://api.github.com/"; // for reference
         final String BASE_URL = "http://ec2-18-191-191-9.us-east-2.compute.amazonaws.com:5000/api/1/";
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
