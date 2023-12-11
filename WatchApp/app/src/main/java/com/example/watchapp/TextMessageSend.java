@@ -46,14 +46,16 @@ public class TextMessageSend extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         Log.d(TAG, "onResponse : " + response.code() + " , " + response.body());
+                        Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.msg_sent_toast) + " to " + toName, Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         Log.d(TAG, "onFailure : " + t.toString());
+                        Toast toast = Toast.makeText(getApplicationContext(), R.string.msg_failed_toast, Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
-                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.msg_sent_toast) + " to " + toName, Toast.LENGTH_SHORT);
-                toast.show();
             }
         });
     }

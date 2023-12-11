@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">WatchApp</string>
     <string name="msg_sent_toast">Message sent!</string>
+    <string name="msg_failed_toast">Failed to send message!</string>
     <string name="msg_none">No messages available from this user.</string>
     <string name="debug_enter_user">Enter user name.</string>
     <string name="debug_save_user_toast_success">Saved user id!</string>
